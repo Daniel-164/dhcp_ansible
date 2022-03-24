@@ -1,0 +1,38 @@
+- name: "Instalación dhcp"
+  apt:
+    pkg:
+      - isc-dhcp-server
+      - iptables
+
+- name: "Editar fichero /etc/network/interfaces"
+  template:
+    src: interfaces
+    dest: /etc/network/interfaces
+    owner: root
+    group: root
+    mode: '0644'
+  notify: reiniciar equipo
+
+- name: "Editar fichero /etc/dhcp/dhcpd.conf"
+  template:
+    src: dhcpd.conf
+    dest: /etc/dhcp/dhcpd.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reiniciar servicio de dhcp
+
+- name: "Editar fichero /etc/default/isc-dhcp-server"
+  template:
+    src: isc-dhcp-server
+    dest: /etc/default/isc-dhcp-server
+    owner: root
+    group: root
+    mode: 0644
+  notify: reiniciar servicio de dhcp
+
+- name: "Activar bit de forward"
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    reload: yes
